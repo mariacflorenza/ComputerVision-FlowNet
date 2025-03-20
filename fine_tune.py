@@ -89,16 +89,33 @@ class OpticalFlowDataset(Dataset):
 
         return real_img1, real_img2, gt_img1, gt_img2
 
+# =================================== For 80% training and 20% testing split ===================================
+# from torch.utils.data import random_split
+# # Load dataset
+# dataset = OpticalFlowDataset("D:/FISE A3/Semestre 6/UE_G - Computer Vision/Project/FlowNet 2025/ComputerVision-FlowNet-main/sequences-train")
+# # dataloader = DataLoader(dataset, batch_size=8, shuffle=True)
 
-from torch.utils.data import random_split
-# Load dataset
-dataset = OpticalFlowDataset("D:/FISE A3/Semestre 6/UE_G - Computer Vision/Project/FlowNet 2025/ComputerVision-FlowNet-main/sequences-train")
-# dataloader = DataLoader(dataset, batch_size=8, shuffle=True)
+# # Split dataset into 80% training and 20% testing
+# train_size = int(0.8 * len(dataset))
+# test_size = len(dataset) - train_size
+# train_dataset, test_dataset = random_split(dataset, [train_size, test_size])
+# =========================================================================================================
 
-# Split dataset into 80% training and 20% testing
-train_size = int(0.8 * len(dataset))
-test_size = len(dataset) - train_size
-train_dataset, test_dataset = random_split(dataset, [train_size, test_size])
+# =================================== Choose several sequence classes for training ===================================
+# Define the sequences for training and testing
+train_sequences = ["bag", "bear", "camel", "swan"]
+test_sequences = ["book", "rhino"]
+
+# Load datasets
+train_dataset = OpticalFlowDataset(
+    "D:/FISE A3/Semestre 6/UE_G - Computer Vision/Project/FlowNet 2025/ComputerVision-FlowNet-main/sequences-train",
+    train_sequences,
+)
+test_dataset = OpticalFlowDataset(
+    "D:/FISE A3/Semestre 6/UE_G - Computer Vision/Project/FlowNet 2025/ComputerVision-FlowNet-main/sequences-train",
+    test_sequences,
+)
+# =========================================================================================================
 
 # Create DataLoaders for training and testing
 train_dataloader = DataLoader(train_dataset, batch_size=8, shuffle=True)
@@ -190,7 +207,7 @@ for epoch in range(num_epochs):
     print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {running_loss/len(train_dataloader):.4f}")
 
 # Save fine-tuned model
-torch.save(model.state_dict(), "flownets_EPE1.951_finetuned_80_train.pth")
+torch.save(model.state_dict(), "flownets_EPE1.951_finetuned_selected_sequences.pth")
 
 # Testing loop
 model.eval()  # Set model to evaluation mode
