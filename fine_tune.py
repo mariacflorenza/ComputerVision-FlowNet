@@ -143,7 +143,7 @@ for epoch in range(num_epochs):
 
     for real_img1, real_img2, gt_img1, gt_img2 in train_dataloader:
         real_img1, real_img2 = real_img1.to(device), real_img2.to(device)
-        gt_img1, gt_img2 = gt_img1.to(device), gt_img2.to(device)
+        # gt_img1, gt_img2 = gt_img1.to(device), gt_img2.to(device)
 
         optimizer.zero_grad()
         
@@ -155,12 +155,32 @@ for epoch in range(num_epochs):
         if isinstance(pred_flow, tuple):
             pred_flow = pred_flow[0]
 
-        # Use ground-truth flow as the target
-        gt_flow = torch.cat([gt_img1.unsqueeze(1), gt_img2.unsqueeze(1)], dim=1)  # Combine ground-truth flows
+        # # Use ground-truth flow as the target
+        # gt_flow = torch.cat([gt_img1.unsqueeze(1), gt_img2.unsqueeze(1)], dim=1)  # Combine ground-truth flows
 
-        # Resize ground-truth flow to match the dimensions of pred_flow
-        gt_flow = F.interpolate(gt_flow, size=pred_flow.shape[-2:], mode='bilinear', align_corners=False)
-
+        # # Resize ground-truth flow to match the dimensions of pred_flow
+        # gt_flow = F.interpolate(gt_flow, size=pred_flow.shape[-2:], mode='bilinear', align_corners=False)
+        
+        img1 = real_img1.cpu().detach().numpy() 
+        img2 = real_img2.cpu().detach().numpy() 
+        
+        img1 = (img1 * 255).astype(np.uint8)[0]
+        img2 = (img2 * 255).astype(np.uint8)[0] 
+        
+        img1 = np.transpose(img1, (1, 2, 0))
+        img2 = np.transpose(img2, (1, 2, 0))
+    
+        real_img1_gray = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+        real_img2_gray = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+        
+        gt_flow = cv2.calcOpticalFlowFarneback(real_img1_gray, real_img2_gray, None, 0.5, 3, 15, 3, 5, 1.2, 0)
+        gt_flow = torch.tensor(gt_flow).to(device)
+        gt_flow = F.interpolate(
+            gt_flow.permute(2, 0, 1).unsqueeze(0).float(), 
+            size=(96, 128),  
+            mode='bilinear', 
+            align_corners=False 
+        )
         # Compute loss
         loss = criterion(pred_flow, gt_flow)
         loss.backward()
@@ -179,7 +199,7 @@ network_data = {
     'state_dict': model.state_dict(),
     'div_flow': 20  
 }
-torch.save(network_data, 'flownets_finetuned.pth')
+torch.save(network_data, 'flownets_finetuned_farneback.pth')
 print('Model saved!')
 
 # ----------------------- Testing loop -----------------------
