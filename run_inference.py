@@ -14,6 +14,7 @@ import numpy as np
 from util import flow2rgb
 import cv2
 from util import create_img_pairs
+from models.FlowNetS import FlowNetS
 # import imageio.v2 as imageio
 
 model_names = sorted(
@@ -106,10 +107,17 @@ def main():
     print("=> will save " + output_string)
     data_dir = Path(args.data)
     print("=> fetching img pairs in '{}'".format(args.data))
+
+    if "finetuned" in args.pretrained:
+        output_dir = "flow_finetuned"
+    else:
+        output_dir = "flow"
+
     if args.output is None:
-        save_path = data_dir / "flow"
+        save_path = data_dir / output_dir
     else:
         save_path = Path(args.output)
+
     print("=> will save everything to {}".format(save_path))
     save_path.makedirs_p()
     # Data loading code
@@ -136,8 +144,10 @@ def main():
     print("{} samples found".format(len(img_pairs)))
     # create model
     network_data = torch.load(args.pretrained)
+    # arch = 'FlowNetS' 
     print("=> using pre-trained model '{}'".format(network_data["arch"]))
     model = models.__dict__[network_data["arch"]](network_data).to(device)
+    # model = FlowNetS(batchNorm=True).to(device)
     model.eval()
     cudnn.benchmark = True
 
@@ -172,8 +182,6 @@ def main():
         img1 = input_transform(img1)
         img2 = input_transform(img2)
 
-        # img1 = input_transform(imread(img1_file))
-        # img2 = input_transform(imread(img2_file))
         input_var = torch.cat([img1, img2]).unsqueeze(0)
 
         if args.bidirectional:
@@ -188,14 +196,16 @@ def main():
             output = F.interpolate(
                 output, size=img1.size()[-2:], mode=args.upsampling, align_corners=False
             )
+
+        # output = F.interpolate(output, size=img1.size()[-2:], mode = "bilinear", align_corners=False)
         for suffix, flow_output in zip(["flow", "inv_flow"], output):
             # filename = save_path / "{}{}".format(img1_file.stem[:-1], suffix)
             # MF
             filename = save_path / "{}-{}-{}-{}".format( 
-                img1_file.stem.split("-")[0],  # Parte común de la imagen, por ejemplo "bear"
+                img1_file.stem.split("-")[0],  # Common part eg. "bear"
                 suffix,
-                img1_file.stem.split("-")[1],  # Número de la primera imagen, por ejemplo "001"
-                img2_file.stem.split("-")[1],  # Número de la segunda imagen, por ejemplo "002"
+                img1_file.stem.split("-")[1],  # Number of img1
+                img2_file.stem.split("-")[1],  # Number of img2
             )
             # print(filename)
             if args.output_value in ["vis", "both"]:

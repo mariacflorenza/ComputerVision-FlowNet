@@ -1,31 +1,31 @@
+import argparse
 import torch
-from models.FlowNetS import FlowNetS
-from models.FlowNetC import FlowNetC
+import torch.nn as nn
+import torch.optim as optim
+import torch.nn.functional as F
+from torch.utils.data import Dataset, DataLoader
+import cv2
+import os
+import numpy as np
+import models
 
-# Select the model type
-model_type = 'FlowNetS'  # Change to 'FlowNetC' if needed
-# Correct the path to the pre-trained model
-pretrained_path = "D:/FISE A3/Semestre 6/UE_G - Computer Vision/Project/FlowNet 2025/ComputerVision-FlowNet-main/models_PyTorch/pytorch/flownets_EPE1.951.pth"
+parser = argparse.ArgumentParser(description="Fine-tune FlowNet model")
+parser.add_argument("--pretrained", metavar="PTH", help="path to pre-trained model")
+args = parser.parse_args()
 
-# Load model
-if model_type == 'FlowNetS':
-    model = FlowNetS(batchNorm=False)  # Set batchNorm=True if using batch normalization
-elif model_type == 'FlowNetC':
-    model = FlowNetC(batchNorm=False)
+device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
-# Load pre-trained weights
-checkpoint = torch.load(pretrained_path)
-model.load_state_dict(checkpoint['state_dict'])
+# create model
+network_data = torch.load(args.pretrained)
+
+print("=> using pre-trained model '{}'".format(network_data["arch"]))
+model = models.__dict__[network_data["arch"]](network_data).to(device)
 
 # Move model to GPU if available
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = model.to(device)
 model.train()  # Set model to training mode
 
-from torch.utils.data import Dataset, DataLoader
-import cv2
-import os
-import numpy as np
 
 class OpticalFlowDataset(Dataset):
     def __init__(self, image_dir, transform=None):
@@ -37,7 +37,7 @@ class OpticalFlowDataset(Dataset):
         self.gt_images = sorted([f for f in os.listdir(image_dir) if f.endswith('.png')])
 
         # Ensure the number of real and ground-truth images match
-        assert len(self.real_images) == len(self.gt_images), "Mismatch between real and ground-truth images"
+        # assert len(self.real_images) == len(self.gt_images), "Mismatch between real and ground-truth images"
 
     def __len__(self):
         return len(self.real_images) - 1  # Pairs of images
@@ -108,11 +108,11 @@ test_sequences = ["book", "rhino"]
 
 # Load datasets
 train_dataset = OpticalFlowDataset(
-    "D:/FISE A3/Semestre 6/UE_G - Computer Vision/Project/FlowNet 2025/ComputerVision-FlowNet-main/sequences-train",
+    "sequences-train",
     train_sequences,
 )
 test_dataset = OpticalFlowDataset(
-    "D:/FISE A3/Semestre 6/UE_G - Computer Vision/Project/FlowNet 2025/ComputerVision-FlowNet-main/sequences-train",
+    "sequences-train",
     test_sequences,
 )
 # =========================================================================================================
@@ -121,9 +121,6 @@ test_dataset = OpticalFlowDataset(
 train_dataloader = DataLoader(train_dataset, batch_size=8, shuffle=True)
 test_dataloader = DataLoader(test_dataset, batch_size=8, shuffle=False)
 
-import torch.nn as nn
-import torch.optim as optim
-import torch.nn.functional as F
 
 class EPELoss(nn.Module):
     def __init__(self):
@@ -136,44 +133,11 @@ class EPELoss(nn.Module):
 criterion = EPELoss()
 optimizer = optim.Adam(model.parameters(), lr=1e-4)
 
-num_epochs = 40  # Adjust based on dataset size
-
-# for epoch in range(num_epochs):
-#     running_loss = 0.0
-
-#     for real_img1, real_img2, gt_img1, gt_img2 in dataloader:
-#         real_img1, real_img2 = real_img1.to(device), real_img2.to(device)
-#         gt_img1, gt_img2 = gt_img1.to(device), gt_img2.to(device)
-
-#         optimizer.zero_grad()
-        
-#         # Forward pass (FlowNet expects concatenated inputs)
-#         inputs = torch.cat([real_img1, real_img2], dim=1)  # Concatenate along channel dimension
-#         pred_flow = model(inputs)
-
-#         # If pred_flow is a tuple, extract the first element
-#         if isinstance(pred_flow, tuple):
-#             pred_flow = pred_flow[0]
-
-#         # Use ground-truth flow as the target
-#         gt_flow = torch.cat([gt_img1.unsqueeze(1), gt_img2.unsqueeze(1)], dim=1)  # Combine ground-truth flows
-
-#         # Resize ground-truth flow to match the dimensions of pred_flow
-#         gt_flow = F.interpolate(gt_flow, size=pred_flow.shape[-2:], mode='bilinear', align_corners=False)
-
-#         # Compute loss
-#         loss = criterion(pred_flow, gt_flow)
-#         loss.backward()
-#         optimizer.step()
-
-#         running_loss += loss.item()
-
-#     print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {running_loss/len(dataloader):.4f}")
-
-# # Save fine-tuned model
-# torch.save(model.state_dict(), "flownets_EPE1.951_finetuned.pth")
-
+num_epochs = 5  # Adjust based on dataset size
+# ----------------------- Fine-Tuning -----------------------
+print('Fine-tuning the model...')
 for epoch in range(num_epochs):
+    print("epoch:", epoch)
     model.train()  # Set model to training mode
     running_loss = 0.0
 
@@ -206,10 +170,20 @@ for epoch in range(num_epochs):
 
     print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {running_loss/len(train_dataloader):.4f}")
 
-# Save fine-tuned model
-torch.save(model.state_dict(), "flownets_EPE1.951_finetuned_selected_sequences.pth")
 
-# Testing loop
+# ----------------------- Save the model -----------------------
+print('Saving the model...')
+# torch.save(model.state_dict(), 'finetuned_flownet.pth')
+network_data = {
+    'arch': network_data["arch"],
+    'state_dict': model.state_dict(),
+    'div_flow': 20  
+}
+torch.save(network_data, 'flownets_finetuned.pth')
+print('Model saved!')
+
+# ----------------------- Testing loop -----------------------
+print("Testing the model...")
 model.eval()  # Set model to evaluation mode
 test_loss = 0.0
 
