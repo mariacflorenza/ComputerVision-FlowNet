@@ -8,7 +8,7 @@ import cv2
 import os
 import numpy as np
 import models
-
+# python3 fine_tune.py --pretrained flownets_EPE1.951.pth
 parser = argparse.ArgumentParser(description="Fine-tune FlowNet model")
 parser.add_argument("--pretrained", metavar="PTH", help="path to pre-trained model")
 args = parser.parse_args()
@@ -24,7 +24,23 @@ model = models.__dict__[network_data["arch"]](network_data).to(device)
 # Move model to GPU if available
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = model.to(device)
-model.train()  # Set model to training mode
+# model.train() # Set model to training mode 
+
+# ----------------------- Modify the model -----------------------
+print('Modifying the model...')
+# Freeze all the layers of the pre-trained model
+for param in model.parameters():
+    param.requires_grad = False
+
+# Modify the last layer for a new task
+# Assuming the last layer is named 'upsampled_flow3_to_2', to see the layer names, print the model
+# print(model)
+model.upsampled_flow3_to_2 = nn.ConvTranspose2d(2, 2, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
+model.upsampled_flow3_to_2.requires_grad = True  # Unfreeze the last layer
+# Move the modified layer to the same device
+model.upsampled_flow3_to_2 = model.upsampled_flow3_to_2.to(device)
+
+print("Modified model")
 
 
 class OpticalFlowDataset(Dataset):
@@ -131,13 +147,13 @@ class EPELoss(nn.Module):
 
 # Define loss & optimizer
 criterion = EPELoss()
-optimizer = optim.Adam(model.parameters(), lr=1e-4)
+optimizer = optim.Adam(model.upsampled_flow3_to_2.parameters(), lr=1e-4)
 
-num_epochs = 5  # Adjust based on dataset size
+num_epochs = 40  # Adjust based on dataset size
 # ----------------------- Fine-Tuning -----------------------
 print('Fine-tuning the model...')
 for epoch in range(num_epochs):
-    print("epoch:", epoch)
+    # print("epoch:", epoch)
     model.train()  # Set model to training mode
     running_loss = 0.0
 
