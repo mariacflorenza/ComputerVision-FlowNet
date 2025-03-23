@@ -5,10 +5,9 @@ import torch
 
 # MF
 def create_img_pairs(folder_path, sequence_name):
-    print("Making image pairs")
+    # print("Making image pairs")
     img_pairs = []
     images = sorted(os.listdir(folder_path))
-    # filtra los archivos bear*
     images = [img for img in images if img.startswith(sequence_name) and img.endswith(".bmp")]
     # .bmp
     # images = [img for img in images if img.endswith(".bmp")]

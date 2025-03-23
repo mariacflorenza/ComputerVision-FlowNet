@@ -27,11 +27,11 @@ parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 )
 parser.add_argument(
-    "data",
+    "--data",
     metavar="DIR",
     help="path to images folder, image names must match '[name]0.[ext]' and '[name]1.[ext]'",
 )
-parser.add_argument("pretrained", metavar="PTH", help="path to pre-trained model")
+parser.add_argument("--pretrained", metavar="PTH", help="path to pre-trained model")
 
 # select sequence # MF
 parser.add_argument(
@@ -139,7 +139,7 @@ def main():
     #             img_pairs.append([file, img_pair])
 
     img_pairs = create_img_pairs(data_dir, args.sequence)
-    print("image pairs !!! ", img_pairs)
+    # print("image pairs !!! ", img_pairs)
 
     print("{} samples found".format(len(img_pairs)))
     # create model
