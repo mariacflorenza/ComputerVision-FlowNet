@@ -270,6 +270,7 @@ def simple_inference(img1, img2, name, model, cuda_device, save = False):
     
 @torch.no_grad()
 def complete_inferece_saving_seq(name_sequence, path_sequence, model, div_flow):
+    print("Start of flow calculation for sequential integration")
     
     sequence_files = [f for f in os.listdir(path_sequence) if f.startswith(name_sequence) and f.endswith(".bmp")]
     nb_start = 1
@@ -309,7 +310,13 @@ def complete_inferece_saving_seq(name_sequence, path_sequence, model, div_flow):
         boundaries_predict =  mark_boundaries(black_image, mask_predict, color=(1, 0, 0))
         boundaries_gd      =  mark_boundaries(black_image, mask_cur, color=(0, 1, 0)) 
 
-        imwrite( "./results/" + name_sequence +"-mask_pro_sequential"+ str(n_img_2).zfill(3) +'.png', mask_predict)
+        # imwrite( "./results/"name_sequence +"-mask_pro_sequential"+ str(n_img_2).zfill(3) +'.png', mask_predict)
+        results_seq = f"./results/{name_sequence}-mask/sequential"
+        os.makedirs(results_seq, exist_ok=True)
+
+        # Guardar la máscara
+        mask_filename = f"{results_seq}/{name_sequence}-{str(n_img_2).zfill(3)}.png"
+        imwrite( mask_filename, mask_predict)
 
         dice_seq.append(dice_assessment(mask, mask_predict))
         fmeasures_seq.append(db_eval_boundary(mask,mask_predict))
@@ -317,7 +324,7 @@ def complete_inferece_saving_seq(name_sequence, path_sequence, model, div_flow):
 
         np.save("./results/" + name_sequence + "-dice_seq.npy", dice_seq)
         np.save("./results/" + name_sequence + "-fmeasures_seq.npy", fmeasures_seq)
-        np.save("./results/" + name_sequence + "-centroid_assessment.npy", centroid_assessment_seq)
+        np.save("./results/" + name_sequence + "-centroid_assessment_seq.npy", centroid_assessment_seq)
 
     # print("ok " + name_sequence)        
 
@@ -365,7 +372,7 @@ def inference_direct(name_sequence, cuda_device, model, div_flow, path_sequence)
         imwrite(file_name + '.png', to_save_rgb)
 
         to_save_np = (div_flow*flow_output).cpu().numpy().transpose(1,2,0)
-        print(file_name + '.npy')
+        # print(file_name + '.npy')
         np.save(file_name + '.npy', to_save_np)
 
     print("End of flow calculation for direct integration")
@@ -393,20 +400,36 @@ def propagate_mask_direct(name_sequence, path_sequence):
     flow_dir.mkdir(parents=True, exist_ok=True)
     original_mask = imread(str(Path(path_sequence) / (name_sequence + "-001.png")))
     first_img = imread(str(Path(path_sequence) / (name_sequence + "-001.bmp")))
+    
+    dice_dir, fmeasures_dir, centroid_assessment_dir = [], [], []
 
-    for i in range(nb_start+1, nb_end+1):
+    for i in tqdm(range(nb_start+1, nb_end+1)):
+        mask_gt = imread(str(Path(path_sequence) / (name_sequence + "-" + str(i).zfill(3) +".png"))) # for evaluation
         flow = np.load( str(flow_dir / (name_sequence + "-flow" + "-001-" + str(i).zfill(3) + '.npy')))    
         current_mask = propagate_mask(flow, img_current= first_img, mask_begin = original_mask)
-
-        imwrite( f"./results/{name_sequence}-mask_pro_dir-001-"+ str(i).zfill(3) +'.png', current_mask)
+        
+        # imwrite( f"./results/{name_sequence}-mask/direct/{name_sequence}-001-"+ str(i).zfill(3) +'.png', current_mask)
+        results_dir = f"./results/{name_sequence}-mask/direct"
+        os.makedirs(results_dir, exist_ok=True)
+        mask_filename = f"{results_dir}/{name_sequence}-{str(i).zfill(3)}.png"
+        imwrite( mask_filename, current_mask)
         # print(f"ok {name_sequence}-mask_pro_dir-001-"+ str(i).zfill(3) +'.png')
+
+        dice_dir.append(dice_assessment(mask_gt, current_mask))
+        fmeasures_dir.append(db_eval_boundary(mask_gt,current_mask))
+        centroid_assessment_dir.append(centroid_assessment(mask_gt,current_mask))
+
+        np.save("./results/" + name_sequence + "-dice_dir.npy", dice_dir)
+        np.save("./results/" + name_sequence + "-fmeasures_dir.npy", fmeasures_dir)
+        np.save("./results/" + name_sequence + "-centroid_assessment_dir.npy", centroid_assessment_dir)
+
     print("End of mask propagation for direct integration")
 
 def main():
     parser = argparse.ArgumentParser(description="PyTorch FlowNet inference")
     parser.add_argument('sequences_path', metavar='DIR', help='path to images folder')
     parser.add_argument('model_path', metavar='PTH', help='path to pre-trained model')
-    parser.add_argument('--mode', type=str, default='complete', choices=['complete', 'direct', 'inference'],
+    parser.add_argument('--mode', type=str, default='sequential', choices=['sequential', 'direct', 'inference'],
                         help='Choose mode: complete_inferece_saving_seq, inference_direct, or inference')
     parser.add_argument('--sequence', '-s', metavar='PREFIX', default='bear', help='Prefix for image sequences')
     # parser.add_argument('--start', type=int, default=1, help='Start frame number')
@@ -420,7 +443,7 @@ def main():
 
     device = set_cuda()
     
-    if args.mode == 'complete':
+    if args.mode == 'sequential':
         model, div_flow = load_model(path_to_model, device)
         complete_inferece_saving_seq(args.sequence, args.sequences_path, model, div_flow)
         inference(args.sequence, device, model, div_flow, args.sequences_path)
