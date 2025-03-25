@@ -427,8 +427,8 @@ def propagate_mask_direct(name_sequence, path_sequence):
 
 def main():
     parser = argparse.ArgumentParser(description="PyTorch FlowNet inference")
-    parser.add_argument('sequences_path', metavar='DIR', help='path to images folder')
-    parser.add_argument('model_path', metavar='PTH', help='path to pre-trained model')
+    parser.add_argument('--sequences_path', metavar='DIR', help='path to images folder')
+    parser.add_argument('--model_path', metavar='PTH', help='path to pre-trained model')
     parser.add_argument('--mode', type=str, default='sequential', choices=['sequential', 'direct', 'inference'],
                         help='Choose mode: complete_inferece_saving_seq, inference_direct, or inference')
     parser.add_argument('--sequence', '-s', metavar='PREFIX', default='bear', help='Prefix for image sequences')
