@@ -2,7 +2,7 @@ import os
 import subprocess
 import argparse
 import run_inference
-# $ python3 all_sequences_inference.py --pretrained flownets_EPE1.951.pth
+# $ python3 all_sequences_inference.py --pretrained flownets_EPE1.951.pth --mode direct/sequential
 # Pretrained model path from the arguments
 parser = argparse.ArgumentParser(description="Run inference for all sequences using FlowNet")
 parser.add_argument('--pretrained', type=str, required=True, help='Path to the pre-trained model')
