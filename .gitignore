@@ -1,3 +1,5 @@
 sequences-train/
 *.pth
 *.pyc
+*.png
+*.npy
