@@ -417,7 +417,11 @@ def propagate_mask_direct(name_sequence, path_sequence):
 
         dice_dir.append(dice_assessment(mask_gt, current_mask))
         fmeasures_dir.append(db_eval_boundary(mask_gt,current_mask))
-        centroid_assessment_dir.append(centroid_assessment(mask_gt,current_mask))
+        if  np.all(current_mask == 0):
+            centroid_assessment_dir.append(0)
+            # print("No centroid")
+        else:
+            centroid_assessment_dir.append(centroid_assessment(mask_gt,current_mask))
 
         np.save("./results/" + name_sequence + "-dice_dir.npy", dice_dir)
         np.save("./results/" + name_sequence + "-fmeasures_dir.npy", fmeasures_dir)
