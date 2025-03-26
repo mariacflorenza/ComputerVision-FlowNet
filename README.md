@@ -57,8 +57,6 @@ python3 run_inference.py <sequence_name> <mode>
 - `--mode`: Tracking mode (`direct` or `sequential`).  
 - `--sequence`: Specifies the category that you want to use among these following categories: `bear`, `book`, `bag`, `camel`, `rhino` and `swan`.
 
-Replace path/to/image/folder with the path to your image folder and path/to/pretrained/model.pth with the path to your pre-trained FlowNet model.  You can select either the direct or sequential tracking method and specify the sequence for inference.
-
 ### Inference for All Sequences
 
 A script was created to iteratively run inference for all sequences, automating the process instead of running each sequence manually.  
