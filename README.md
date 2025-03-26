@@ -14,7 +14,10 @@ The primary goal of this project is:
 1. To utilize FlowNet model to estimate optical flow and apply it for tracking objects in image sequences.
 2. To enhance the performance of optical flow estimation, we **fine-tune** a **pre-trained FlowNet model** using **custom datasets**. By leveraging the pre-trained weights, we aim to adapt the model to specific scenarios and improve its accuracy on new data. The fine-tuning process involves freezing most of the layers in the network and only updating the weights of the final layers to better capture the nuances of the new dataset.
 
-**!! Note**: For this project, the majority of the code is written in Python. Moreoever, we worked mainly on **Jupyter Notebook** and **Visual Studio Code**. However, due to the limitted resources, we manage to **use only the CPU** (the runtime type). One more thing to remember is that the simulated results were for the **FlowNetS** architecture because of time constraint of this project.
+**!! Note**: 
+1. For this project, the majority of the code is written in Python. Moreoever, we worked mainly on **Jupyter Notebook** and **Visual Studio Code**. However, due to the limitted resources, we manage to **use only the CPU** (the runtime type).
+2. The simulated results were for the **FlowNetS** architecture because of time constraint of this project.
+3. Because of the large amount of data for `sequences-train` and `sequences-test`, we will provide you the link to access to these sequences through Google Drive: [`sequences-train`](https://drive.google.com/drive/folders/1equxxDidVitH5tJERKP7FZSi8OmI9VQa?usp=sharing) and [`sequences-test`](https://drive.google.com/drive/folders/1rMXW_fZVQSXOc7bsaGjwEDFWf8LDI9iK?usp=sharing)
  
 **!! Slide**: You can also find the final presentation of this project [here](./final-restitution-team-2.pdf).
 
@@ -49,6 +52,10 @@ To calculate the optical flow using the specified model and save the results wit
 python3 run_inference.py <sequence_name> <mode>
 !python3 run_inference.py --sequences_path /path/to/sequence --model_path /path/to/pretrained/model.pth  --mode <sequential/direct> --sequence <sequence_name>
 ```
+- `--sequences_path`: Path to specify the sequences from the training (`train`) or test (`test`) set.  
+- `--model_path`: Path to the pretrained FlowNet model
+- `--mode`: Tracking mode (`direct` or `sequential`).  
+- `--sequence`: Specifies whether to process sequences from the training (`train`) or test (`test`) set.
 
 Replace path/to/image/folder with the path to your image folder and path/to/pretrained/model.pth with the path to your pre-trained FlowNet model.  You can select either the direct or sequential tracking method and specify the sequence for inference.
 
