@@ -24,9 +24,9 @@ The primary goal of this project is:
 1. To utilize FlowNet model to estimate optical flow and apply it for tracking objects in image sequences.
 2. To enhance the performance of optical flow estimation, we **fine-tune** a **pre-trained FlowNet model** using **custom datasets**. By leveraging the pre-trained weights, we aim to adapt the model to specific scenarios and improve its accuracy on new data. The fine-tuning process involves freezing most of the layers in the network and only updating the weights of the final layers to better capture the nuances of the new dataset.
 
-**Note**: For this project, the majority of the code is written in Python. Moreoever, we worked mainly on **Jupyter Notebook** and **Visual Studio Code**. However, due to the limitted resources, we manage to **use only the CPU** (the runtime type). One more thing to remember is that the simulated results were for the **FlowNetS** architecture because of time constraint of this project.
+**!! Note**: For this project, the majority of the code is written in Python. Moreoever, we worked mainly on **Jupyter Notebook** and **Visual Studio Code**. However, due to the limitted resources, we manage to **use only the CPU** (the runtime type). One more thing to remember is that the simulated results were for the **FlowNetS** architecture because of time constraint of this project.
  
-**Slide**: You can also find the final presentation of this project [here](./final-restitution-team-2.pdf).
+**!! Slide**: You can also find the final presentation of this project [here](./final-restitution-team-2.pdf).
 
 ### Prerequisites
 
