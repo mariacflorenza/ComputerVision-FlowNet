@@ -51,16 +51,6 @@ To install the dependencies, run:
 pip install -r requirements.txt
 ```
 
-### 
-
-## Self-Supervised Fine-tuning Startegy
-Usage
-To fine-tune the FlowNet model, run the following command:
-```
-python3 fine_tune.py --pretrained path/to/pretrained/model.pth
-```
-Replace path/to/pretrained/model.pth with the actual path to your pre-trained FlowNet model. For example : flownets_EPE1.951.pth
-
 ## Optical Flow Estimation
 We use the FlowNet model from this GitHub repository: [FlowNetPytorch](https://github.com/ClementPinard/FlowNetPytorch), where you can also find [pre-trained models](https://drive.google.com/drive/folders/1dTpSyc7rIYYG19p1uiDfilcsmSPNy-_3).  
 
@@ -70,6 +60,13 @@ python run_inference.py --data path/to/image/folder --pretrained path/to/pretrai
 ```
 
 Replace path/to/image/folder with the path to your image folder and path/to/pretrained/model.pth with the path to your pre-trained FlowNet model.
+
+## Self-Supervised Fine-tuning Startegy
+In order to fine-tune the FlowNet model, run the following command:
+```
+python3 fine_tune.py --pretrained path/to/pretrained/model.pth
+```
+Replace path/to/pretrained/model.pth with the actual path to your pre-trained FlowNet model. For example : flownets_EPE1.951.pth
 
 ## Results
 You can find the all the results within the "results" folder.
