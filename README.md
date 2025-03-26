@@ -2,7 +2,7 @@
 
 ## Introduction  
 
-This project focuses on using the FlowNet model for optical flow estimation and applying it to track objects in image sequences. Optical flow is a crucial component in computer vision, used to estimate the motion of objects between consecutive frames in a video sequence. The FlowNet architecture, originally proposed by Dosovitskiy et al., has been widely adopted for its effectiveness in predicting dense optical flow.
+This project focuses on using the FlowNet model for optical flow estimation and applying it to track objects in image sequences. Optical flow is a crucial component in computer vision, used to estimate the motion of objects between consecutive frames in a video sequence. The [FlowNet architecture](https://arxiv.org/pdf/1504.06852), originally proposed by Dosovitskiy et al., has been widely adopted for its effectiveness in predicting dense optical flow.
 
 ### Project Overview
 The primary goal of this project is to utilize the FlowNet model to estimate optical flow and apply it for tracking objects in image sequences. To enhance the performance of optical flow estimation, we fine-tune a pre-trained FlowNet model using custom datasets. By leveraging the pre-trained weights, we aim to adapt the model to specific scenarios and improve its accuracy on new data. The fine-tuning process involves freezing most of the layers in the network and only updating the weights of the final layers to better capture the nuances of the new dataset.
