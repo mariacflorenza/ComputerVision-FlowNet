@@ -1,11 +1,31 @@
 # FlowNet: A Convolutional Neural Network Approach to Optical Flow
 
-## Introduction  
+## Acknowledgements  
 
-This project focuses on using the FlowNet model for optical flow estimation and applying it to track objects in image sequences. Optical flow is a crucial component in computer vision, used to estimate the motion of objects between consecutive frames in a video sequence. The [FlowNet architecture](https://arxiv.org/pdf/1504.06852), originally proposed by Dosovitskiy et al., has been widely adopted for its effectiveness in predicting dense optical flow.
+This project was developed as part of the Computer Vision course led and supervised by P.-H. Conze, V. Burdin, R. Fablet, P. Papadakis, L. Bergantin and G. Andrade-Miranda at IMT Atlantique - Bretagne-Pays de la Loire. 
 
-### Project Overview
-The primary goal of this project is to utilize the FlowNet model to estimate optical flow and apply it for tracking objects in image sequences. To enhance the performance of optical flow estimation, we fine-tune a pre-trained FlowNet model using custom datasets. By leveraging the pre-trained weights, we aim to adapt the model to specific scenarios and improve its accuracy on new data. The fine-tuning process involves freezing most of the layers in the network and only updating the weights of the final layers to better capture the nuances of the new dataset.
+## Authors
+Catalina ARDILA, email: <dely.ardila-medina@imt-atlantique.net>
+
+Maria FLORENZA, email: <maria.florenza-lamberti@imt-atlantique.net>
+
+Nhan NGUYEN, email: <nhan.nguyen@imt-atlantique.net>
+
+## Table of Contents
+
+1. [Introduction](#introduction)
+2. [Score-Based Data Assimilation](#score-based-data-assimilation)
+3. [Denoising Algorithm](#denoising-algorithm)
+
+### Introduction
+It focuses on using the FlowNet model for optical flow estimation and applying it to track objects in image sequences. Optical flow is a crucial component in computer vision, used to estimate the motion of objects between consecutive frames in a video sequence. The [FlowNet architecture](https://arxiv.org/pdf/1504.06852), originally proposed by Dosovitskiy et al., has been widely adopted for its effectiveness in predicting dense optical flow.
+
+The primary goal of this project i:
+1. To utilize FlowNet model to estimate optical flow and apply it for tracking objects in image sequences. To enhance the performance of optical flow estimation, we fine-tune a pre-trained FlowNet model using custom datasets. By leveraging the pre-trained weights, we aim to adapt the model to specific scenarios and improve its accuracy on new data. The fine-tuning process involves freezing most of the layers in the network and only updating the weights of the final layers to better capture the nuances of the new dataset.
+
+**Note**: For this project, the majority of the code is written in Python. Moreoever, we worked mainly on **Jupyter Notebook** and **Visual Studio Code**. However, due to the limitted resources, we manage to **use only the CPU** (the runtime type). One more thing to remember is that the simulated results were for the **FlowNetS** architecture because of time constraint of this project.
+ 
+**Slide**: You can also find the final presentation of this project [here](./final-restitution-team-2.pdf).
 
 ## Prerequisites
 
@@ -50,12 +70,4 @@ Replace path/to/image/folder with the path to your image folder and path/to/pret
 ## Results
 
 
-## Acknowledgements
-This project was developed as part of the Computer Vision course led and supervised by Pierre-Henri Conze at IMT Atlantique.
 
-## Authors
-Catalina ARDILA, email: <dely.ardila-medina@imt-atlantique.net>
-
-Maria FLORENZA, email: <maria.florenza-lamberti@imt-atlantique.net>
-
-Nhan NGUYEN, email: <nhan.nguyen@imt-atlantique.net>
