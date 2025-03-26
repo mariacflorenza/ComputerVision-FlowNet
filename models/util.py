@@ -8,10 +8,10 @@ except ImportError as e:
 
     with warnings.catch_warnings():
         warnings.filterwarnings("default", category=ImportWarning)
-        warnings.warn(
-            "failed to load custom correlation module" "which is needed for FlowNetC",
-            ImportWarning,
-        )
+        # warnings.warn(
+        #     "failed to load custom correlation module" "which is needed for FlowNetC",
+        #     ImportWarning,
+        # )
 
 
 def conv(batchNorm, in_planes, out_planes, kernel_size=3, stride=1):

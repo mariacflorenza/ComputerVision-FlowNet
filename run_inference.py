@@ -185,13 +185,15 @@ def load_model(model_path, cuda_device):
     return model, div_flow
 
 @torch.no_grad()
-def inference(name_sequence, cuda_device, model, div_flow, path_sequence):
+def inference(name_sequence, cuda_device, model, div_flow, path_sequence, path_to_model):
     
     sequence_files = [f for f in os.listdir(path_sequence) if f.startswith(name_sequence) and f.endswith(".bmp")]
     nb_start = 1
     nb_end = len(sequence_files)
-
-    flow_dir = Path('results') / 'flow'
+    if 'finetuned' in path_to_model : 
+        flow_dir = Path('results') / 'flow-finetuned'
+    else : 
+        flow_dir = Path('results') / 'flow'
     flow_dir.mkdir(parents=True, exist_ok=True)
 
     input_transform = transforms.Compose([
@@ -230,9 +232,12 @@ def inference(name_sequence, cuda_device, model, div_flow, path_sequence):
         np.save(file_name + '.npy', to_save_np)
 
 @torch.no_grad()
-def simple_inference(img1, img2, name, model, cuda_device, save = False):
+def simple_inference(img1, img2, name, model, cuda_device,path_to_model, save = False):
     div_flow = 20.0
-    flow_dir = Path('sequences-train') / 'flow-sequential'
+    if 'finetuned' in path_to_model : 
+        flow_dir = Path('sequences-train') / 'flow-sequential-finetuned'
+    else : 
+        flow_dir = Path('sequences-train') / 'flow-sequential'
     flow_dir.mkdir(parents=True, exist_ok=True)
 
     input_transform = transforms.Compose([
@@ -269,7 +274,7 @@ def simple_inference(img1, img2, name, model, cuda_device, save = False):
     return  to_save_np
     
 @torch.no_grad()
-def complete_inferece_saving_seq(name_sequence, path_sequence, model, div_flow):
+def complete_inferece_saving_seq(name_sequence, path_sequence, model, div_flow, path_to_model):
     print("Start of flow calculation for sequential integration")
     
     sequence_files = [f for f in os.listdir(path_sequence) if f.startswith(name_sequence) and f.endswith(".bmp")]
@@ -299,7 +304,7 @@ def complete_inferece_saving_seq(name_sequence, path_sequence, model, div_flow):
         # flow = simple_inference(img1, img2, name_sequence + str(n_img_1).zfill(3), model, device) # This is line 355, where `flow` is assigned
 
         # Ensure simple_inference returns the numpy array
-        flow = simple_inference(img1, img2, name_sequence + str(n_img_1).zfill(3), model, device, save=True)
+        flow = simple_inference(img1, img2, name_sequence + str(n_img_1).zfill(3), model, device, path_to_model, save=True)
 
         if i == 1:
             flow_conc = flow
@@ -311,7 +316,12 @@ def complete_inferece_saving_seq(name_sequence, path_sequence, model, div_flow):
         boundaries_gd      =  mark_boundaries(black_image, mask_cur, color=(0, 1, 0)) 
 
         # imwrite( "./results/"name_sequence +"-mask_pro_sequential"+ str(n_img_2).zfill(3) +'.png', mask_predict)
-        results_seq = f"./results/{name_sequence}-mask/sequential"
+        if 'finetuned' in path_to_model : 
+            results_seq = f"./results/{name_sequence}-mask/sequential-finetuned"
+
+        else : 
+            results_seq = f"./results/{name_sequence}-mask/sequential"
+        
         os.makedirs(results_seq, exist_ok=True)
 
         # Guardar la máscara
@@ -330,9 +340,13 @@ def complete_inferece_saving_seq(name_sequence, path_sequence, model, div_flow):
 
 @torch.no_grad()
 # Runs inference with direct integration, first frame as reference
-def inference_direct(name_sequence, cuda_device, model, div_flow, path_sequence):
+def inference_direct(name_sequence, cuda_device, model, div_flow, path_sequence, path_to_model):
     print("Start of flow calculation for direct integration")
-    flow_dir = Path('sequences-train') / 'flow-direct'
+    if 'finetuned' in path_to_model : 
+        flow_dir = Path('sequences-train') / 'flow-direct-finetuned'
+    else : 
+        # flow_dir = Path('sequences-train') / 'flow-direct'
+        flow_dir = Path('sequences-train') / 'flow-direct'
     flow_dir.mkdir(parents=True, exist_ok=True)
 
     input_transform = transforms.Compose([
@@ -388,14 +402,16 @@ def propagate_mask(flow, img_current, mask_begin):
     return new_mask
 
 @torch.no_grad()
-def propagate_mask_direct(name_sequence, path_sequence):
+def propagate_mask_direct(name_sequence, path_sequence, path_to_model):
     print("Start of mask propagation for direct integration")
     
     sequence_files = [f for f in os.listdir(path_sequence) if f.startswith(name_sequence) and f.endswith(".bmp")]
     nb_start = 1
     nb_end = len(sequence_files)
-    
-    flow_dir = Path('sequences-train') / 'flow-direct'
+    if 'finetuned' in path_to_model : 
+        flow_dir = Path('sequences-train') / 'flow-direct-finetuned'
+    else : 
+        flow_dir = Path('sequences-train') / 'flow-direct'
     # Ensure the directory exists
     flow_dir.mkdir(parents=True, exist_ok=True)
     original_mask = imread(str(Path(path_sequence) / (name_sequence + "-001.png")))
@@ -409,7 +425,10 @@ def propagate_mask_direct(name_sequence, path_sequence):
         current_mask = propagate_mask(flow, img_current= first_img, mask_begin = original_mask)
         
         # imwrite( f"./results/{name_sequence}-mask/direct/{name_sequence}-001-"+ str(i).zfill(3) +'.png', current_mask)
-        results_dir = f"./results/{name_sequence}-mask/direct"
+        if 'finetuned' in path_to_model : 
+            results_dir = f"./results/{name_sequence}-mask/direct-finetuned"
+        else:
+            results_dir = f"./results/{name_sequence}-mask/direct"
         os.makedirs(results_dir, exist_ok=True)
         mask_filename = f"{results_dir}/{name_sequence}-{str(i).zfill(3)}.png"
         imwrite( mask_filename, current_mask)
@@ -449,15 +468,15 @@ def main():
     
     if args.mode == 'sequential':
         model, div_flow = load_model(path_to_model, device)
-        complete_inferece_saving_seq(args.sequence, args.sequences_path, model, div_flow)
-        inference(args.sequence, device, model, div_flow, args.sequences_path)
+        complete_inferece_saving_seq(args.sequence, args.sequences_path, model, div_flow, path_to_model)
+        inference(args.sequence, device, model, div_flow, args.sequences_path, path_to_model)
     elif args.mode == 'direct':
         model, div_flow = load_model(path_to_model, device)
-        inference_direct(args.sequence, device, model, div_flow, args.sequences_path)
-        propagate_mask_direct(args.sequence, args.sequences_path)
+        inference_direct(args.sequence, device, model, div_flow, args.sequences_path, path_to_model)
+        propagate_mask_direct(args.sequence, args.sequences_path, path_to_model)
     elif args.mode == 'inference':
         model, div_flow = load_model(path_to_model, device)
-        inference(args.sequence, device, model, div_flow, args.sequences_path)
+        inference(args.sequence, device, model, div_flow, args.sequences_path, path_to_model)
 
 if __name__ == "__main__":
     main()
