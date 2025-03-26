@@ -1,4 +1,5 @@
 sequences-train/
+sequences-test/
 *.pth
 *.pyc
 *.png
