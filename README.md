@@ -14,8 +14,8 @@ Nhan NGUYEN, email: <nhan.nguyen@imt-atlantique.net>
 ## Table of Contents
 
 1. [Introduction](#introduction)
-2. [Score-Based Data Assimilation](#score-based-data-assimilation)
-3. [Denoising Algorithm](#denoising-algorithm)
+2. [Optical Flow Estimation](#optical-flow-estimation)
+3. [Self-Supervised Fine-tuning Strategy](#self-supervised-fine-tuning-strategy)
 
 ### Introduction
 It focuses on using the FlowNet model for optical flow estimation and applying it to track objects in image sequences. Optical flow is a crucial component in computer vision, used to estimate the motion of objects between consecutive frames in a video sequence. The [FlowNet architecture](https://arxiv.org/pdf/1504.06852), originally proposed by Dosovitskiy et al., has been widely adopted for its effectiveness in predicting dense optical flow.
@@ -61,7 +61,7 @@ python run_inference.py --data path/to/image/folder --pretrained path/to/pretrai
 
 Replace path/to/image/folder with the path to your image folder and path/to/pretrained/model.pth with the path to your pre-trained FlowNet model.
 
-## Self-Supervised Fine-tuning Startegy
+## Self-Supervised Fine-tuning Strategy
 In order to fine-tune the FlowNet model, run the following command:
 ```
 python3 fine_tune.py --pretrained path/to/pretrained/model.pth
