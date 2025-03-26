@@ -1,16 +1,5 @@
 # FlowNet: A Convolutional Neural Network Approach to Optical Flow
 
-## Acknowledgements  
-
-This project was developed as part of the Computer Vision course led and supervised by P.-H. Conze, V. Burdin, R. Fablet, P. Papadakis, L. Bergantin and G. Andrade-Miranda at IMT Atlantique - Bretagne-Pays de la Loire. 
-
-## Authors
-Catalina ARDILA, email: <dely.ardila-medina@imt-atlantique.net>
-
-Maria FLORENZA, email: <maria.florenza-lamberti@imt-atlantique.net>
-
-Nhan NGUYEN, email: <nhan.nguyen@imt-atlantique.net>
-
 ## Table of Contents
 
 1. [Introduction](#introduction)
@@ -57,19 +46,56 @@ We use the FlowNet model from this GitHub repository: [FlowNetPytorch](https://g
 
 To calculate the optical flow using the specified model and save the results within the image folder, creating a flow directory, run the following command:
 ```
-python run_inference.py --data path/to/image/folder --pretrained path/to/pretrained/model.pth
+python3 run_inference.py <sequence_name> <mode>
+!python3 run_inference.py --sequences_path /path/to/sequence --model_path /path/to/pretrained/model.pth  --mode <sequential/direct> --sequence <sequence_name>
 ```
 
-Replace path/to/image/folder with the path to your image folder and path/to/pretrained/model.pth with the path to your pre-trained FlowNet model.
+Replace path/to/image/folder with the path to your image folder and path/to/pretrained/model.pth with the path to your pre-trained FlowNet model.  You can select either the direct or sequential tracking method and specify the sequence for inference.
 
+### Inference for All Sequences
+
+A script was created to iteratively run inference for all sequences, automating the process instead of running each sequence manually.  
+
+The script processes all sequences defined in the dataset and applies the selected tracking mode. To execute it, use the following command:  
+
+```bash
+python3 all_sequences_inference.py --pretrained /path/to/pretrained/model.pth --mode direct/sequential --sequence train/test
+```
+
+- `--pretrained`: Path to the pretrained FlowNet model.  
+- `--mode`: Tracking mode (`direct` or `sequential`).  
+- `--sequence`: Specifies whether to process sequences from the training (`train`) or test (`test`) set.  
+
+This will compute optical flow and propagate masks iteratively for each sequence in the dataset, storing the results automatically.
 ## Self-Supervised Fine-tuning Strategy
+To adapt the FlowNet model to the specific tracking task, fine-tuning was performed by re-training the final layer on the dataset. This helps the model better capture motion patterns relevant to the sequences used in inference.
+
 In order to fine-tune the FlowNet model, run the following command:
 ```
 python3 fine_tune.py --pretrained path/to/pretrained/model.pth
 ```
 Replace path/to/pretrained/model.pth with the actual path to your pre-trained FlowNet model. For example : flownets_EPE1.951.pth
 
-## Results
-You can find the all the results [here](./res).
+# Results Visualization and Inference Notebook
+
+A **Jupyter Notebook** is provided to run inference and analyze the results. It allows you to:
+* Run inference on selected sequences using the pretrained FlowNet model.
+* Visualize predicted masks, comparing them between direct and sequential tracking methods.
+* Generate GIFs to observe mask propagation over time.
+* Compute and display evaluation metrics for tracking performance.
+
+You can access the notebook here: [Results Analysis Notebook](FlowNet_Trackingipynb)  
+
+
+## Acknowledgements  
+
+This project was developed as part of the Computer Vision course led and supervised by P.-H. Conze, V. Burdin, R. Fablet, P. Papadakis, L. Bergantin and G. Andrade-Miranda at IMT Atlantique - Bretagne-Pays de la Loire. 
+
+## Authors
+Catalina ARDILA, email: <dely.ardila-medina@imt-atlantique.net>
+
+Maria FLORENZA, email: <maria.florenza-lamberti@imt-atlantique.net>
+
+Nhan NGUYEN, email: <nhan.nguyen@imt-atlantique.net>
 
 
