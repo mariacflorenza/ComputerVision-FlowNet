@@ -55,7 +55,7 @@ python3 run_inference.py <sequence_name> <mode>
 - `--sequences_path`: Path to specify the sequences from the training (`train`) or test (`test`) set.  
 - `--model_path`: Path to the pretrained FlowNet model
 - `--mode`: Tracking mode (`direct` or `sequential`).  
-- `--sequence`: Specifies the category that you want to use between these following categories: `bear`, `book`, `bag`, `camel`, `rhino` and `swan`.
+- `--sequence`: Specifies the category that you want to use among these following categories: `bear`, `book`, `bag`, `camel`, `rhino` and `swan`.
 
 Replace path/to/image/folder with the path to your image folder and path/to/pretrained/model.pth with the path to your pre-trained FlowNet model.  You can select either the direct or sequential tracking method and specify the sequence for inference.
 
