@@ -11,8 +11,19 @@ The primary goal of this project is to utilize the FlowNet model to estimate opt
 
 Ensure you have the following dependencies installed:
 
-- ????
-  
+```
+torch>=1.2
+torchvision
+numpy
+spatial-correlation-sampler>=0.2.1
+tensorboard
+imageio
+argparse
+path
+tqdm
+scipy
+```
+
 To install the dependencies, run:
 
 ```
