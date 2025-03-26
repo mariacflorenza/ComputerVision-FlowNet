@@ -3,3 +3,4 @@ sequences-train/
 *.pyc
 *.png
 *.npy
+*.gif
