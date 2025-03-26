@@ -83,14 +83,11 @@ Replace path/to/pretrained/model.pth with the actual path to your pre-trained Fl
 
 ## Results Visualization and Inference Notebook
 
-A **Jupyter Notebook** is provided to run inference and analyze the results. It allows you to:
+A [**Jupyter Notebook**](./FlowNet_Tracking.ipynb) is provided to run inference and analyze the results. It allows you to:
 * Run inference on selected sequences using the pretrained FlowNet model.
 * Visualize predicted masks, comparing them between direct and sequential tracking methods.
 * Generate GIFs to observe mask propagation over time.
 * Compute and display evaluation metrics for tracking performance.
-
-You can access the notebook here: [Results Analysis Notebook](FlowNet_Trackingipynb)  
-
 
 ## Acknowledgements  
 
