@@ -1,4 +1,4 @@
-# FlowNet: A Convolutional Neural Network Approach to Optical Flow
+# Visual tracking of video objects using FlowNet
 
 ## Table of Contents
 
