@@ -5,7 +5,7 @@
 1. [Introduction](#introduction)
 2. [Optical Flow Estimation](#optical-flow-estimation)
 3. [Self-Supervised Fine-tuning Strategy](#self-supervised-fine-tuning-strategy)
-4. [Results](#results)
+4. [Results Visualization and Inference Notebook](#results-visualization-and-inference-notebook)
 
 ### Introduction
 It focuses on using the FlowNet model for optical flow estimation and applying it to track objects in image sequences. Optical flow is a crucial component in computer vision, used to estimate the motion of objects between consecutive frames in a video sequence. The [FlowNet architecture](https://arxiv.org/pdf/1504.06852), originally proposed by Dosovitskiy et al., has been widely adopted for its effectiveness in predicting dense optical flow.
