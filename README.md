@@ -76,7 +76,7 @@ python3 fine_tune.py --pretrained path/to/pretrained/model.pth
 ```
 Replace path/to/pretrained/model.pth with the actual path to your pre-trained FlowNet model. For example : flownets_EPE1.951.pth
 
-# Results Visualization and Inference Notebook
+## Results Visualization and Inference Notebook
 
 A **Jupyter Notebook** is provided to run inference and analyze the results. It allows you to:
 * Run inference on selected sequences using the pretrained FlowNet model.
