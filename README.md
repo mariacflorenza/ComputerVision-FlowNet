@@ -14,12 +14,11 @@ The primary goal of this project is:
 1. To utilize FlowNet model to estimate optical flow and apply it for tracking objects in image sequences.
 2. To enhance the performance of optical flow estimation, we **fine-tune** a **pre-trained FlowNet model** using **custom datasets**. By leveraging the pre-trained weights, we aim to adapt the model to specific scenarios and improve its accuracy on new data. The fine-tuning process involves freezing most of the layers in the network and only updating the weights of the final layers to better capture the nuances of the new dataset.
 
-**!! Note**: 
-1. For this project, the majority of the code is written in Python. Moreoever, we worked mainly on **Jupyter Notebook** and **Visual Studio Code**. However, due to the limitted resources, we manage to **use only the CPU** (the runtime type).
-2. The simulated results were for the **FlowNetS** architecture because of time constraint of this project.
-3. Because of the large amount of data for `sequences-train` and `sequences-test`, we will provide you the link to access to these sequences through Google Drive: [`sequences-train`](https://drive.google.com/drive/folders/1equxxDidVitH5tJERKP7FZSi8OmI9VQa?usp=sharing) and [`sequences-test`](https://drive.google.com/drive/folders/1rMXW_fZVQSXOc7bsaGjwEDFWf8LDI9iK?usp=sharing)
+**Note**: 
+1. The simulated results were for the **FlowNetS** architecture because of time constraint of this project.
+2. Because of the large amount of data for `sequences-train` and `sequences-test`, we will provide you the link to access to these sequences through Google Drive: [`sequences-train`](https://drive.google.com/drive/folders/1equxxDidVitH5tJERKP7FZSi8OmI9VQa?usp=sharing) and [`sequences-test`](https://drive.google.com/drive/folders/1rMXW_fZVQSXOc7bsaGjwEDFWf8LDI9iK?usp=sharing)
  
-**!! Slide**: You can also find the final presentation of this project [here](./final-restitution-team-2.pdf).
+**Slides**: You can also find the final presentation of this project [here](./final-restitution-team-2.pdf).
 
 ### Prerequisites
 
